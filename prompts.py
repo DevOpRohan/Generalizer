@@ -42,8 +42,8 @@ Always respond in this format:
     {{
     "round_number": <round_number>,
     "generalizer": {{
-        "GENERIC_QUESTION_STRING": "[sting(..), ...]",
-        "GENERIC_SOLUTION_STRING": "[sting(..), ...]"
+        "GENERIC_QUESTION_STRING": "[sting(..), ...],...",
+        "GENERIC_SOLUTION_STRING": "[sting(..), ...],..."
     }},
     "verifier": <verification_feedback>
     }},

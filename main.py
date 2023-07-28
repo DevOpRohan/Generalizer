@@ -1,8 +1,9 @@
-# Fine-tuning on custom guidelines, example
 import asyncio
+import json
 
 from Bot import Bot
 
+# Fine-tuning on custom guidelines, example
 # 1. You can add some custom guidelines in this string (start from 5. )
 guidelines = """
 1. Variable names should be kept as they are.
@@ -36,44 +37,48 @@ VARIABLE_CONSTANT_MAP: {p: 7, q:10}
 original_list = [
     (
         """
-        [,string(Robert's electronics shop buys headphones at a wholesale price of latex(\\$ 113).),string(If the markup rate at Robert's electronics shop is latex(45 \\%), what is the markup for the headphones?),]
+        [string(latex(12) でわると latex(6) あまる整数の中で latex(199) に最も近い数を求めなさい。)]
         """,
         """
-        [string(The amount of markup can be found with the following equation.),string(Markup rate latex(\\times) wholesale price latex(=) amount of markup),string(Since markup rate is a percentage, we have to convert it into a decimal first.),string(So, latex(45 \\%=\\dfrac{45}{100}=0.45)),string(Now, using the formula and substituting the values, we get latex(0.45 \\times \\$ 113=\\$ 50.85)),string(Therefore, the amount of markup on the headphones is latex(\\$ 50.85).)]
+        [string(求める数は latex(12) の倍数よりも latex(6) 大きい数なので,),string(latex(12 \\\\times \\\\square + 6) と表すことができます。),string(latex((199-6)\\\\div 12 = 16 ) あまり latex(1 ) より,),string(latex(12\\\\times 16+6= \\\\underline{198}) です。latex(\\\\quad \\\\blacktriangleleft 199-1=198) でも可)]
         """
     ),
     (
         """
-        [string(The bookstore is having a latex(20\\%) off sale on all of its books.),string(If the book you want to purchase costs latex(\\$18), what is the markdown for the book?)]
+        [string(latex(8) でわっても, latex(12) でわっても latex(7) あまる latex(3) けたの整数の中で最も小さい数を求めなさい。)]
         """,
 
         """
-        [string(The amount of markdown can be found with the following equation.),string(Markdown rate latex(\\times) original price latex(=) amount of markdown),string(Since the markdown rate is a percentage, we have to convert it into a decimal first.),string(So, latex(20 \\%=\\dfrac{20}{100}=0.20)),string(Now, using the formula and substituting the values, we get latex(0.20 \\times \\$ 18=\\$ 3.60)),string(Therefore, the amount of markdown for the book is latex(\\$ 3.60).)]
+        [string(求める数は,latex(\\\\lparen 8) の倍数latex(\\\\rparen +7,~\\\\lparen 12) の倍数latex(\\\\rparen + 7) であることから, latex(\\\\quad \\\\blacktriangleleft) あまりが等しい場合求める数は, latex(\\\\lparen)わる数の公倍数latex(\\\\rparen)latex(+)latex(\\\\lparen)あまりの数 latex(\\\\rparen) ),string(latex(8) と latex(12) の公倍数latex(\\\\lparen\\\\rightarrow 24 ) の倍数latex(\\\\rparen) に, latex(7) を加えた数です。),string(よって, latex(24 \\\\times \\\\square + 7) と表すことができ, latex(3) けたで最も小さい数は,),string(latex(24 \\\\times 4+ 7= \\\\underline{103}) です。)]
         """
     ),
     (
         """
-        [string(Sophia works at a reputable art gallery. She earns a commission of latex(6\\%) on every artwork she sells. If she sells a painting for latex(\\$764), how much money does Sophia make in commission?)]
+        [string(Có bao nhiêu cặp số tự nhiên latex((x; y)) thỏa mãn latex(4\\\\left(4^{5y}+5y \\\\right)+2003\\\\leq -x^2+2000x+\\\\log_{4}\\\\left[(x-1999)^{4} (1-x)^{4} \\\\right] )?)]
         """,
 
         """
-        [string(To find the amount of commission made, use the following formula Commission rate latex(\\times) retail price latex(=) amount of commission made Since the commission rate is a percentage, we have to convert it into a decimal first. So, latex(6 \\%=\\dfrac{6}{100}=0.06)),string(Now, using the formula and substituting the values, we get latex(0.06 \\times \\$ 764=\\$ 45.84)),string(Therefore, the amount of commission Sophia makes by selling a computer is latex(\\$ 45.84).)]
+        [string(Để bất đẳng thức đã cho luôn đúng thì),string(ĐKlatex(\\\\colon ( x -1999)^{4}(1- x )^{4}>0) ),string(latex((x-1999)(1-x)>0) ),string(latex(1< x <1999) ),string(latex(x \\\\in N \\\\implies 2 \\\\leq x \\\\leq 1998).),string(Coi như,),string(latex(4\\\\left(4^{5 y}+5 y\\\\right)+2003 \\\\leq-x^{2}+2000 x+\\\\log _{4}\\\\left[(x-1999)^{4}(1-x)^{4}\\\\right]) ),string(latex(4\\\\cdot 4^{5 y}+20 y+2003 \\\\leq-x^{2}+2000 x+4 \\\\log _{4}(x-1999)(1-x)) ),string(latex(4^{5 y+1}+4(5 y+1) \\\\leq-x^{2}+2000 x-1999+4 \\\\log _{4}\\\\left(-x^{2}+2000 x-1999\\\\right) \\\\qquad \\\\ldots\\\\ldots (i) ) ),string(Đặt latex(u =\\\\log _{4}\\\\left(- x ^{2}+2000 x -1999\\\\right) \\\\Leftrightarrow 4^{u}=\\\\left(- x ^{2}+2000 x -1999\\\\right)) ),string(latex((i)) Trở thành latex(4^{5 y+1}+4(5 y+1) \\\\leq 4^{u}+4 u \\\\qquad \\\\qquad \\\\ldots\\\\ldots (ii) )),string(Xét hàm số),string(latex(f(t)=4^{t}+4 t)),string(latex( f^{\\\\prime}(t)=4^{t} \\\\cdot \\\\ln 4+4>0~ \\\\forall t \\\\Rightarrow f(t)) là hàm số đồng biến trên latex(R)),string(latex(f(5 y+1) \\\\leq f(u))),string(latex(5 y+1 \\\\leq u \\\\qquad \\\\ldots \\\\ldots (iii))),string(latex(5 y+1 \\\\leq \\\\log _{4}\\\\left(-x^{2}+2000 x-1999\\\\right))),string(Xét hàm số latex(g(x)=-x ^{2}+2000x -1999),  với latex(2 \\\\leq x \\\\leq 1998).),string(latex(g^{\\\\prime}(x)=-2 x+2000)),string(latex( g^{\\\\prime}=0 \\\\Leftrightarrow x=1000)),string(latex(g(2)=g(1998)=1997 )),string(latex( g(1000)= 998001 \\\\Rightarrow g(x) \\\\leq 998001 )),string(Do đó latex(5 y+1 \\\\leq \\\\log _{4}(998001) )),string(latex(5y+1\\\\leq 9.96 )),string(latex(5y\\\\leq 9.96-1 )),string(latex(y\\\\leq \\\\dfrac{8.96}{5} )),string(latex(y\\\\leq 1.79 )),string(latex(y\\\\in N \\\\implies y\\\\in \\\\{0;1\\\\} )),string(Thay latex(y=0) vào latex((iii))),string(latex(u\\\\geq  1)),string(latex(4^{u}\\\\geq 4 )),string(latex(-x^2+2000x-1999\\\\geq 4)),string(latex(-x^2+2000x-2003\\\\geq 0)),string(latex( 1.002 \\\\leq x \\\\leq 1998.99799 )),string(latex(x\\\\in \\\\{2, 3,\\\\ldots \\\\ldots, 1998 \\\\}) có latex(1997 ) số tự nhiên),string(Với latex(y = 1) ),string(latex(u\\\\geq 6)),string(latex(4^{u}\\\\geq 4^{6})),string(latex(-x^2+2000x-1999\\\\geq 4096 )),string(latex(-x^2+2000x-6095\\\\geq 0 )),string(latex(3.05215 \\\\leq x\\\\leq 1996.94784 )),string(latex(x\\\\in \\\\{ 4, 5,\\\\ldots \\\\ldots, 1996 \\\\}) có latex(1993 ) số tự nhiên.),string(Kết luận có latex(3990 ) cặp số tự nhiên latex((x; y)) thỏa đề bài.),string(Hence, the fourth option is correct.)]
         """
     ),
     (
         """
-        [string(In San Francisco, California, stores charge a latex(3.65\\%) city sales tax and a latex(4.6\\%) state sales tax. Emma is purchasing a smartwatch at latex(\\$220) before tax.),string(How much sales tax does Emma pay for her smartwatch purchase?)]
+        [string(Cho hàm số latex(f(x)) liên tục trên latex(\\\\R). Biết latex(f(x)) có đạo hàm là latex(f^{\\\\prime}(x)=x^{8}+2) và latex(f(1)=2). Khi đó latex(\\displaystyle\\int_{0}^{2} f\\\\left(\\\\dfrac{x}{2}\\\\right) d x) bằng)]
         """,
         """
-        [,string(We have to convert the percentage of tax into a decimal first.),string(latex(4.6 \\%=\\dfrac{4.6}{100}=0.046)),string(latex(3.65 \\%=\\dfrac{3.65}{100}=0.0365)),string(Since both sales tax rates apply to latex(\\$ 220), we can add the two rates.),string(latex(0.046+0.0365=0.0825)),string(latex(0.0825 \\times \\$ 220=\\$ 18.15)),string(Emma pays latex(\\$ 18.15) in sales tax for her smartwatch purchase.),]
+        [string(Xét latex(\\displaystyle\\int_{0}^{2} f \\\\left(\\\\dfrac{x}{2} \\\\right) d x),  đặt latex(t=\\\\dfrac{x}{2} \\\\Rightarrow d t=\\\\dfrac{d x}{2})),string(Đổi cậnlatex(\\\\colon x=0),  latex(t=0)), string(latex(\\\\qquad\\\\quad x=2),  latex(t=1)), string(Suy ra, latex(\\displaystyle\\int_{0}^{2} f \\\\left(\\\\dfrac{x}{2}\\\\right) d x=\\displaystyle\\int_{0}^{1} 2 f(t) d t)),string(Xét latex(\\displaystyle\\int_{0}^{1} f(t) d t),  đặt latex(u = f(t)),  latex(du= f'(t)dt) và latex(dv= 2dt),  latex(v = 2t)),custom_evaluation_expression(lhs([string(latex(\\displaystyle\\int_{0}^{1} 2f(t) d t))]),  rhs([string(latex(\\\\left. 2 t \\\\cdot f(t)\\\\right|_{0} ^{1}-\\displaystyle\\int_{0}^{1} 2t \\\\cdot f^{\\\\prime}(t) d t)), string(latex(2(1)(2)-\\displaystyle\\int_{0}^{1} 2t\\\\left(t^{8}+2 \\\\right) d t)), string(latex(4-\\displaystyle\\int_{0}^{1} \\\\left(2t^{9}+4t \\\\right) d t)), string(latex(4- \\\\left.\\\\left(\\\\dfrac{t^{10}}{5}+2t^{2} \\\\right)\\\\right|_{0}^{1})), string(latex(4-\\\\dfrac{1}{5}-2 )), string(latex(2-\\\\dfrac{1}{5})), string(latex(\\\\dfrac{9}{5}))]),equating(latex(=))),string(Hence, the fourth option is correct.)]
         """
     ),
     (
         """
-        [string(Anna has dinner at a fancy restaurant and the cost of her meal is latex(\\$36.00). Due to the exceptional service, she decides to leave a latex(15\\%) tip.),string(What is her total bill including tip?)]
+        [string(Suppose the average weight of adults is latex(123) pounds and the average weight of minors is latex(79) pounds.)]
+        SUBPARTS:
+        A. [string(Choose the function that relates the total weight latex(T(a)) with the number of adults latex((a)).)]
+        B. [string(Choose the function that relates the total weight latex(M(b)) with the number of minors latex((b)).)]
         """,
         """
-       [,string(The tip is a percentage, we have to convert it into a decimal first.),string(So, latex(15 \\%=\\dfrac{15}{100}=0.15)),evaluation_expression(lhs([string(The tip amount)]),rhs([string(latex(0.15 \\times \\$ 36)),string(latex(\\$ 5.4))])),string(Now calculate the total bill, we get),evaluation_expression(lhs([string(Total bill)]),rhs([string(latex(\\$ 36+\\$ 5.4)),string(latex(\\$ 41.4))])),string(Therefore, the total bill is latex(\\$ 41.4).),] 
+        A. [string(Average weight of adults latex(=) latex(\\\\\\\\dfrac{\\\\\\\\text{Total~weight~of~adults}}{\\\\\\\\text{Number~of ~adults}})),string(According to the question,),string(latex(123=\\\\\\\\dfrac{T(a)}{a})),string(latex(T(a)=123a)),string(Hence, the second option is correct.)]
+        B. [string(Average weight of minors latex(=) latex(\\\\\\\\dfrac{\\\\\\\\text{Total ~weight ~of ~minors}}{\\\\\\\\text{Number ~of ~minors}})),string(According to the question,),string(latex(79=\\\\\\\\dfrac{M(b)}{b})),string(latex(M(b)=79b)),string(Hence, the first option is correct.)]
         """
     )
 ]
@@ -82,20 +87,3 @@ bot = Bot(guidelines, example_original_question_string, example_original_solutio
           example_generic_question_string, example_generic_solution_string, example_variable_constant_map)
 
 generic_list = asyncio.run(bot.list_generalizer(original_list))
-#
-# # Print each generalized question-solution pair
-# for i in range(len(generic_list)):
-#     print("======================================\nQUES_SOL_PAIR: ", i + 1)
-#     print("Question_String: ", """\n""" + original_list[i][0])
-#     print("Solution_String: ", """\n""" +  original_list[i][1])
-#     print("Generic_Question_String: ", """\n""" + generic_list[i])
-#     print("\n")
-
-#Print in the text file
-with open("generic_questions.txt", "w") as f:
-    for i in range(len(generic_list)):
-        f.write("======================================\nQUES_SOL_PAIR: " + str(i + 1))
-        f.write("\nQuestion_String: \n" + original_list[i][0])
-        f.write("\nSolution_String: \n" + original_list[i][1])
-        f.write("\nGeneric_Question_String: \n" + generic_list[i])
-        f.write("\n\n")
