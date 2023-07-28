@@ -10,6 +10,7 @@ guidelines = """
 2. Constants should be replaced with val(a), val(b), val(c), etc., in the order they appear.
 3. Any calculations or expressions that need to be evaluated should be formatted as expr(a+b-c).
 4. Ensure to use val() and expr() correctly and logically. 
+5. Be careful about syntax e.g.Balanced parentheses.
 """
 
 # 2. Add a example to get more fine-tuned response.
